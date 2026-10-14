@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ClearFrame</title><link rel="stylesheet" href="style.css"></head>
+<body class="no-media">
+<header><button id="open">导入素材</button><div class="filebar header-file"><div class="fileidentity"><span class="pill" id="type">工作台</span><span id="filename">未导入素材</span></div><span id="dimensions">图片 / 视频</span></div><div class="top-actions"><button id="help" class="icon-button" title="快捷键" aria-label="操作帮助">?</button><button id="export" class="primary" disabled>导出</button></div></header>
+<main>
+ <section class="workspace" aria-label="预览与选区编辑">
+  <div class="canvas-tools">
+   <div class="segmented" aria-label="编辑工具"><button id="drawTool" class="active" title="绘制区域 (D)" aria-pressed="true">＋ 添加选区</button><button id="selectTool" title="选择 / 移动 (V)" aria-pressed="false">↖ 选择</button></div>
+   <div class="toolgroup"><button id="undo" class="icon-button" title="撤销 (Ctrl+Z)" aria-label="撤销" disabled>↶</button><button id="redo" class="icon-button" title="重做 (Ctrl+Shift+Z)" aria-label="重做" disabled>↷</button><span class="divider"></span><button id="guides" title="显示 / 隐藏选框 (H)" aria-pressed="true" disabled>显示选框</button></div>
+  </div>
+  <div id="stage">
+   <div id="empty"><p>导入图片或视频后，拖动框选需要修补的区域。</p><button id="emptyOpen" class="primary">＋ 选择素材</button><div class="formats">PNG / JPG / WEBP <span>·</span> MP4 / MOV / MKV</div></div>
+   <div id="frame" hidden><canvas id="preview"></canvas><canvas id="overlay" tabindex="0" aria-label="选区编辑画布；使用方向键微调选中区域"></canvas></div>
+  </div>
+  <div class="preview-meta"><div class="preview-switch"><button id="compare" title="切换原片；也可按住空格临时对照" aria-pressed="false" disabled>◐ 对照原片</button><span id="viewLabel"><i></i>修补预览</span></div><span id="canvasHint">拖动添加选区</span><div class="zoom"><button id="zoomOut" aria-label="缩小" disabled>−</button><button id="fit" title="适应窗口 (F)" disabled>适应</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大" disabled>＋</button></div></div>
+  <div class="transport" id="transport"><button id="play" class="play-button" disabled aria-label="播放">▶</button><span id="time">00:00.0 <em>/ 00:00.0</em></span><input id="seek" type="range" min="0" max="1000" value="0" disabled aria-label="视频进度"><button id="mute" class="quiet" disabled aria-pressed="false">声音 开</button><select id="speed" aria-label="播放速度" disabled><option value=".5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></div>
+ </section>
+ <aside>
+  <div class="aside-scroll">
+   <div class="aside-heading"><h2>选区 <span id="count">0 / 16</span></h2></div>
+   <div class="section-title"><span>区域列表</span><button id="clear" class="text-button" disabled>清空全部</button></div>
+   <div id="regions" role="listbox" aria-label="修补区域"></div>
+   <div id="inspector" class="inspector" hidden><div class="section-title"><span id="selectedTitle">区域位置</span><span class="unit">px</span></div><div class="fields">
+    <label><span>X</span><input id="rectX" type="number" min="0" step="1" aria-label="选区横坐标"></label>
+    <label><span>Y</span><input id="rectY" type="number" min="0" step="1" aria-label="选区纵坐标"></label>
+    <label><span>宽</span><input id="rectW" type="number" min="3" step="1" aria-label="选区宽度"></label>
+    <label><span>高</span><input id="rectH" type="number" min="3" step="1" aria-label="选区高度"></label>
+   </div><div class="selection-actions"><button id="duplicate">复制选区</button><button id="remove" class="danger">删除 <kbd>Del</kbd></button></div></div>
+   <div class="tip"><p id="regionTip">在画面上拖动添加选区。支持最多 16 个区域。</p></div>
+
+  </div>
+
+ </aside>
+</main>
+<footer>  <div class="export-card"><div class="section-title"><span>输出</span><span class="output-pill" id="outputType">—</span></div><p id="outputDetail">导入素材后显示导出信息</p><div class="status-line"><span id="statusDot"></span><span id="status" role="status" aria-live="polite">等待导入素材</span></div><progress id="progress" max="100" value="0" hidden></progress><div id="savedBox" hidden><label for="saved">已保存到</label><input id="saved" readonly title="点击选中完整路径"></div></div><div id="busyVeil" hidden><div class="busy-card"><h2 id="busyTitle">正在准备素材</h2><p id="busyDetail">生成本机预览，请稍候。</p><progress id="busyProgress" max="100"></progress><span id="elapsed">已用时 0 秒</span></div></div></footer>
+
+<dialog id="confirmDialog"><h2>导入新的素材？</h2><p>当前选区尚未导出，导入新素材后将清空这些选区。</p><div class="dialog-actions"><button id="confirmCancel">继续编辑</button><button id="confirmAccept" class="primary">导入新素材</button></div></dialog>
+<dialog id="helpDialog"><div class="dialog-heading"><h2>快捷键</h2><button id="closeHelp" aria-label="关闭帮助">×</button></div><div class="shortcut-grid"><span>导入素材</span><kbd>Ctrl O</kbd><span>导出结果</span><kbd>Ctrl Enter</kbd><span>绘制 / 选择工具</span><kbd>D / V</kbd><span>临时对照原片</span><kbd>按住空格</kbd><span>微调选区</span><kbd>方向键 / Shift</kbd><span>撤销 / 重做</span><kbd>Ctrl Z / Ctrl Shift Z</kbd><span>适应窗口 / 显隐选框</span><kbd>F / H</kbd><span>删除 / 取消当前绘制</span><kbd>Delete / Esc</kbd></div><p>拖动四角或边缘控制点调整大小。放大后可滚动查看画面。</p>   <details class="method"><summary>什么画面更适合修补？</summary><p>纯色、天空和平滑背景通常效果更好。复杂纹理、人物或文字可能留下涂抹痕迹。固定选框不会跟踪移动水印。</p></details></dialog>
+<script src="app.js"></script></body></html>
